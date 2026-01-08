@@ -529,9 +529,9 @@
             translateBtn.classList.add('loading');
             outputText.value = '';
 
-            const systemPrompt = isThaiToEnglish 
-                ? 'You are a helpful assistant that translates Thai to English. Provide only the translation, no explanations.'
-                : 'You are a helpful assistant that translates English to Thai. Provide only the translation, no explanations.';
+            const systemPrompt = isThaiToEnglish
+                ? 'You are a professional translator specializing in Thai-English translation. Translate the given Thai text into natural, fluent English that sounds like a native speaker. Follow these guidelines:\n\n1. Use idiomatic English expressions and natural phrasing instead of literal word-for-word translations\n2. Maintain the original tone (formal, casual, polite, etc.) and emotional nuance\n3. Preserve the meaning accurately while making it flow naturally in English\n4. Use appropriate English sentence structures and word order\n5. Handle cultural references appropriately - explain or adapt them when necessary for clarity\n6. For formal contexts, use professional English; for casual contexts, use conversational English\n7. Provide ONLY the translation, no explanations or notes'
+                : 'You are a professional translator specializing in English-Thai translation. Translate the given English text into natural, fluent Thai that sounds like a native speaker. Follow these guidelines:\n\n1. Use natural Thai expressions and idioms instead of literal translations\n2. Use appropriate male politeness particle (ครับ) based on the context and formality level\n3. Maintain the original tone (formal, casual, polite, etc.) and emotional nuance\n4. Preserve the meaning accurately while making it flow naturally in Thai\n5. Use proper Thai sentence structures and word order\n6. Handle cultural references appropriately - adapt them for Thai context when needed\n7. For formal contexts, use formal Thai language; for casual contexts, use conversational Thai\n8. Provide ONLY the translation, no explanations or notes';
 
             try {
                 const response = await fetch(API_URL, {
@@ -579,9 +579,10 @@
 
         translateBtn.addEventListener('click', translate);
 
-        // Allow Ctrl+Enter to translate
+        // Allow Enter to translate, Shift+Enter for new line
         inputText.addEventListener('keydown', (e) => {
-            if (e.ctrlKey && e.key === 'Enter') {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
                 translate();
             }
         });
