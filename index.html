@@ -376,6 +376,143 @@
             font-style: italic;
         }
 
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .header-row h1 {
+            margin-bottom: 0;
+            flex: 1;
+        }
+
+        .help-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid #0f172a;
+            background: white;
+            color: #0f172a;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .help-btn:hover {
+            background: #0f172a;
+            color: white;
+        }
+
+        .char-count {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 6px;
+            text-align: right;
+        }
+
+        .char-count.warning {
+            color: #f97316;
+            font-weight: 600;
+        }
+
+        .char-count.danger {
+            color: #ef4444;
+            font-weight: 700;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: #1a1a2e;
+            font-size: 1.25rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #64748b;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: #f1f5f9;
+            color: #1a1a2e;
+        }
+
+        .shortcut-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .shortcut-item:last-child {
+            border-bottom: none;
+        }
+
+        .shortcut-key {
+            background: #f1f5f9;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #0f172a;
+            font-family: monospace;
+        }
+
+        .shortcut-desc {
+            color: #475569;
+            font-size: 14px;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 24px;
@@ -393,7 +530,10 @@
 </head>
 <body>
     <div class="container">
-        <h1>Quick Translator</h1>
+        <div class="header-row">
+            <h1>Quick Translator</h1>
+            <button class="help-btn" id="helpBtn" title="Keyboard Shortcuts">?</button>
+        </div>
         
         <div class="api-key-section">
             <label for="apiKey">OpenTyphoon API Key</label>
@@ -402,19 +542,21 @@
         </div>
 
         <div class="language-toggle">
-            <button class="lang-btn active" id="langBtn">Thai → English</button>
+            <button class="lang-btn active" id="langBtn">🇹🇭 Thai → English 🇬🇧</button>
             <button class="swap-btn" id="swapBtn" title="Swap languages">⇄</button>
         </div>
 
         <div class="translation-area">
             <div class="text-box">
-                <label for="inputText">Thai</label>
+                <label for="inputText">🇹🇭 Thai</label>
                 <textarea id="inputText" placeholder="Enter text to translate..."></textarea>
+                <div class="char-count" id="inputCharCount">Characters: 0 | Words: 0</div>
             </div>
             <div class="text-box output">
-                <label for="outputText">English</label>
+                <label for="outputText">🇬🇧 English</label>
                 <textarea id="outputText" placeholder="Translation will appear here..." readonly></textarea>
                 <button class="copy-btn" id="copyBtn" title="Copy translation">📋</button>
+                <div class="char-count" id="outputCharCount">Characters: 0 | Words: 0</div>
             </div>
         </div>
 
@@ -436,6 +578,34 @@
         </div>
     </div>
 
+    <!-- Keyboard Shortcuts Modal -->
+    <div class="modal" id="shortcutsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Keyboard Shortcuts</h3>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="shortcut-item">
+                    <span class="shortcut-key">Enter</span>
+                    <span class="shortcut-desc">Translate text</span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-key">Shift + Enter</span>
+                    <span class="shortcut-desc">Insert new line</span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-key">Escape</span>
+                    <span class="shortcut-desc">Clear all text</span>
+                </div>
+                <div class="shortcut-item">
+                    <span class="shortcut-key">Ctrl + Z</span>
+                    <span class="shortcut-desc">Undo clear</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const API_URL = 'https://api.opentyphoon.ai/v1/chat/completions';
         const MODEL = 'typhoon-v2.5-30b-a3b-instruct';
@@ -453,9 +623,16 @@
         const clearHistoryBtn = document.getElementById('clearHistoryBtn');
         const historyList = document.getElementById('historyList');
         const errorDiv = document.getElementById('error');
+        const inputCharCount = document.getElementById('inputCharCount');
+        const outputCharCount = document.getElementById('outputCharCount');
+        const helpBtn = document.getElementById('helpBtn');
+        const shortcutsModal = document.getElementById('shortcutsModal');
+        const modalClose = document.getElementById('modalClose');
 
         let isThaiToEnglish = true;
         let translationHistory = [];
+        let lastClearedInput = '';
+        let lastClearedOutput = '';
 
         // Load API key from localStorage
         const savedApiKey = localStorage.getItem('opentyphoon_api_key');
@@ -480,10 +657,9 @@
             isThaiToEnglish = !isThaiToEnglish;
             updateLanguageLabels();
             
-            // Swap text content
-            const tempText = inputText.value;
-            inputText.value = outputText.value;
-            outputText.value = tempText;
+            // Clear both text areas
+            inputText.value = '';
+            outputText.value = '';
         });
 
         function updateLanguageLabels() {
@@ -491,14 +667,14 @@
             const outputLabel = document.querySelector('.text-box.output label');
             
             if (isThaiToEnglish) {
-                langBtn.textContent = 'Thai → English';
-                inputLabel.textContent = 'Thai';
-                outputLabel.textContent = 'English';
+                langBtn.textContent = '🇹🇭 Thai → English 🇬🇧';
+                inputLabel.textContent = '🇹🇭 Thai';
+                outputLabel.textContent = '🇬🇧 English';
                 inputText.placeholder = 'Enter Thai text to translate...';
             } else {
-                langBtn.textContent = 'English → Thai';
-                inputLabel.textContent = 'English';
-                outputLabel.textContent = 'Thai';
+                langBtn.textContent = '🇬🇧 English → Thai 🇹🇭';
+                inputLabel.textContent = '🇬🇧 English';
+                outputLabel.textContent = '🇹🇭 Thai';
                 inputText.placeholder = 'Enter English text to translate...';
             }
         }
@@ -566,8 +742,26 @@
                 const translation = data.choices?.[0]?.message?.content || 'No translation received';
                 outputText.value = translation.trim();
                 
+                // Update character count
+                updateCharCount();
+                
                 // Save to history
                 saveToHistory(text, translation.trim());
+                
+                // Automatically copy to clipboard
+                try {
+                    await navigator.clipboard.writeText(translation.trim());
+                    copyBtn.textContent = '✓';
+                    copyBtn.classList.add('copied');
+                    
+                    setTimeout(() => {
+                        copyBtn.textContent = '📋';
+                        copyBtn.classList.remove('copied');
+                    }, 2000);
+                } catch (error) {
+                    // Silently fail if clipboard is not available
+                    console.log('Auto-copy failed:', error.message);
+                }
 
             } catch (error) {
                 showError(`Translation failed: ${error.message}`);
@@ -611,8 +805,39 @@
 
         // Clear text areas
         clearBtn.addEventListener('click', () => {
+            // Save for undo
+            lastClearedInput = inputText.value;
+            lastClearedOutput = outputText.value;
             inputText.value = '';
             outputText.value = '';
+            updateCharCount();
+        });
+
+        // Escape key to clear forms
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                // Save for undo
+                lastClearedInput = inputText.value;
+                lastClearedOutput = outputText.value;
+                inputText.value = '';
+                outputText.value = '';
+                errorDiv.classList.remove('show');
+                updateCharCount();
+            }
+        });
+
+        // Undo clear with Ctrl+Z
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'z' && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                if (lastClearedInput || lastClearedOutput) {
+                    inputText.value = lastClearedInput;
+                    outputText.value = lastClearedOutput;
+                    lastClearedInput = '';
+                    lastClearedOutput = '';
+                    updateCharCount();
+                }
+            }
         });
 
         // Clear history
@@ -621,6 +846,54 @@
                 translationHistory = [];
                 localStorage.removeItem('translation_history');
                 renderHistory();
+            }
+        });
+
+        // Character count update
+        function updateCharCount() {
+            const inputChars = inputText.value.length;
+            const inputWords = inputText.value.trim() ? inputText.value.trim().split(/\s+/).length : 0;
+            const outputChars = outputText.value.length;
+            const outputWords = outputText.value.trim() ? outputText.value.trim().split(/\s+/).length : 0;
+            
+            inputCharCount.textContent = `Characters: ${inputChars} | Words: ${inputWords}`;
+            outputCharCount.textContent = `Characters: ${outputChars} | Words: ${outputWords}`;
+            
+            // Warning styles for input
+            inputCharCount.classList.remove('warning', 'danger');
+            if (inputChars >= 3800) {
+                inputCharCount.classList.add('danger');
+            } else if (inputChars >= 3500) {
+                inputCharCount.classList.add('warning');
+            }
+        }
+        
+        // Update char count on input
+        inputText.addEventListener('input', updateCharCount);
+        outputText.addEventListener('input', updateCharCount);
+        
+        // Initial char count
+        updateCharCount();
+
+        // Modal handlers
+        helpBtn.addEventListener('click', () => {
+            shortcutsModal.classList.add('show');
+        });
+
+        modalClose.addEventListener('click', () => {
+            shortcutsModal.classList.remove('show');
+        });
+
+        shortcutsModal.addEventListener('click', (e) => {
+            if (e.target === shortcutsModal) {
+                shortcutsModal.classList.remove('show');
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && shortcutsModal.classList.contains('show')) {
+                shortcutsModal.classList.remove('show');
             }
         });
 
@@ -689,6 +962,9 @@
             // Load text
             inputText.value = item.input;
             outputText.value = item.output;
+            
+            // Update character count
+            updateCharCount();
             
             // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
